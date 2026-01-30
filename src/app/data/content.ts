@@ -3,8 +3,8 @@ export const content = {
     nav: { 
       switch: "中文",
       menu: [
-        { label: "TECH DECODE", target: "features" }, // 技術解密 (先)
-        { label: "TECH SPECS", target: "specs" },     // 規格參數 (後)
+        { label: "TECH DECODE", target: "features" },
+        { label: "TECH SPECS", target: "specs" },
         { label: "STORY", target: "story" },
         { label: "CONTACT", target: "contact" },
       ]
@@ -67,8 +67,8 @@ export const content = {
           features: [],
           cta: "Pre-Order",
           highlight: true,
-          // ★★★ 在此貼上您的 Google Form 連結 ★★★
-          link: "https://docs.google.com/forms/d/e/1FAIpQLSevkt0wN4TN6lE1zUGEutYFeEqbUNsem87Q89OuzDziom57Zw/viewform?usp=publish-editor" 
+          // ★★★ 更新連結 (EN) ★★★
+          link: "https://docs.google.com/forms/d/e/1FAIpQLSevkt0wN4TN6lE1zUGEutYFeEqbUNsem87Q89OuzDziom57Zw/viewform" 
         }
       ]
     },
@@ -85,7 +85,7 @@ export const content = {
       social: [
         { 
           name: "Instagram", 
-          id: "@852.Picklers", // Updated ID
+          id: "@852.Picklers",
           url: "https://www.instagram.com/852.picklers/" 
         }
       ],
@@ -162,8 +162,8 @@ export const content = {
           features: [],
           cta: "立即入手",
           highlight: true,
-          // ★★★ 在此貼上您的 Google Form 連結 ★★★
-          link: "https://docs.google.com/forms/d/e/1FAIpQLSevkt0wN4TN6lE1zUGEutYFeEqbUNsem87Q89OuzDziom57Zw/viewform?usp=publish-editorERE"
+          // ★★★ 更新連結 (CN) ★★★
+          link: "https://docs.google.com/forms/d/e/1FAIpQLSevkt0wN4TN6lE1zUGEutYFeEqbUNsem87Q89OuzDziom57Zw/viewform"
         }
       ]
     },
@@ -180,7 +180,7 @@ export const content = {
       social: [
         { 
           name: "Instagram", 
-          id: "@852.Picklers", // Updated ID
+          id: "@852.Picklers",
           url: "https://www.instagram.com/852.picklers/" 
         }
       ],
