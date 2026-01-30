@@ -68,7 +68,7 @@ export const content = {
           cta: "Pre-Order",
           highlight: true,
           // ★★★ 在此貼上您的 Google Form 連結 ★★★
-          link: "YOUR_GOOGLE_FORM_LINK_HERE" 
+          link: "https://docs.google.com/forms/d/e/1FAIpQLSevkt0wN4TN6lE1zUGEutYFeEqbUNsem87Q89OuzDziom57Zw/viewform?usp=publish-editor" 
         }
       ]
     },
@@ -163,7 +163,7 @@ export const content = {
           cta: "立即入手",
           highlight: true,
           // ★★★ 在此貼上您的 Google Form 連結 ★★★
-          link: "YOUR_GOOGLE_FORM_LINK_HERE"
+          link: "https://docs.google.com/forms/d/e/1FAIpQLSevkt0wN4TN6lE1zUGEutYFeEqbUNsem87Q89OuzDziom57Zw/viewform?usp=publish-editorERE"
         }
       ]
     },
