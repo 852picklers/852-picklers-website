@@ -1,6 +1,14 @@
 export const content = {
   en: {
-    nav: { switch: "中文" },
+    nav: { 
+      switch: "中文",
+      menu: [
+        { label: "TECH DECODE", target: "features" }, // 技術解密 (先)
+        { label: "TECH SPECS", target: "specs" },     // 規格參數 (後)
+        { label: "STORY", target: "story" },
+        { label: "CONTACT", target: "contact" },
+      ]
+    },
     hero: {
       label: "852 PICKLERS ．FIRST SERVE",
       title: "HOME COURT STYLE\nPRO SPECS",
@@ -70,12 +78,32 @@ export const content = {
       text1: "852 Picklers was born in 2025 from a simple belief: Hong Kong people deserve a paddle that truly represents this city. Tired of cookie-cutter designs, we are determined to inject a unique \"852 Soul\" into the rapidly growing pickleball scene.",
       text2: "We insist on \"Pro Specs, No Compromise\". From T700 raw carbon to hybrid core tech, every detail benchmarks against international flagship standards. This is not just gear; it's a comrade carrying Hong Kong's neon culture and gritty spirit. Whether you're a rookie or a veteran, holding an 852 Picklers paddle means holding not just feel, but home court confidence.",
       quote: "Home Court. Strong Serve."
+    },
+    footer: {
+      title: "CONTACT US",
+      email: "enquiry@852picklers.com",
+      social: [
+        { 
+          name: "Instagram", 
+          id: "@852.Picklers", // Updated ID
+          url: "https://www.instagram.com/852.picklers/" 
+        }
+      ],
+      copyright: "© 2025 852 PICKLERS. ALL RIGHTS RESERVED."
     }
   },
   
   // ================= 中文版 =================
   cn: {
-    nav: { switch: "EN" },
+    nav: { 
+      switch: "EN",
+      menu: [
+        { label: "技術解密", target: "features" },
+        { label: "規格參數", target: "specs" },
+        { label: "品牌故事", target: "story" },
+        { label: "聯絡我們", target: "contact" },
+      ]
+    },
     hero: {
       label: "852 PICKLERS ．FIRST SERVE",
       title: "主場風格\n頂級配置",
@@ -145,6 +173,18 @@ export const content = {
       text1: "852 Picklers 誕生於 2025 年，源於一個簡單的信念：香港人值得擁有一塊真正代表這座城市的球拍。我們厭倦了千篇一律的設計，決心為快速發展的香港匹克球運動注入獨特的「852 靈魂」。",
       text2: "我們堅持「頂級配置，拒絕妥協」。從 T700 原生碳纖面到混合核心科技，每一個細節都對標國際旗艦標準。這不只是一件裝備，而是承載著香港霓虹文化與硬淨精神的戰友。無論你是剛入門的新手，還是追求極致的老手，拿起 852 Picklers，你握住的不只是手感，更是主場的自信。",
       quote: "香港主場，強勢出擊。"
+    },
+    footer: {
+      title: "聯絡我們",
+      email: "enquiry@852picklers.com",
+      social: [
+        { 
+          name: "Instagram", 
+          id: "@852.Picklers", // Updated ID
+          url: "https://www.instagram.com/852.picklers/" 
+        }
+      ],
+      copyright: "© 2025 852 PICKLERS. 版權所有"
     }
   }
 };

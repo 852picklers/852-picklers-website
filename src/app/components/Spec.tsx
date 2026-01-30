@@ -9,11 +9,12 @@ type Props = {
 
 export default function Spec({ data }: Props) {
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto px-6 md:px-12 py-20 md:py-28 bg-[#0f0f0f]">
+    // ★★★ 修改：只改這裡，將 1400px 改為 1800px 以對齊全站寬度，內部設計完全不變 ★★★
+    <section className="relative w-full max-w-[1800px] mx-auto px-6 md:px-12 py-20 md:py-28 bg-[#0f0f0f]">
       
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-20">
         
-        {/* ================= LEFT COLUMN: 標題 + 參數列表 ================= */}
+        {/* ================= LEFT COLUMN: 標題 + 參數列表 (保持原設計) ================= */}
         <div className="flex flex-col justify-between h-full">
             
             {/* 1. Header */}
@@ -50,7 +51,7 @@ export default function Spec({ data }: Props) {
         </div>
 
 
-        {/* ================= RIGHT COLUMN: 圖片 + 邊框 (Frame) ================= */}
+        {/* ================= RIGHT COLUMN: 圖片 + 邊框 (保持原設計) ================= */}
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -72,9 +73,7 @@ export default function Spec({ data }: Props) {
                     src="/wireframe.png"
                     alt={data.fig}
                     fill
-                    // ★★★ 修改處：響應式設定 ★★★
-                    // 手機版 (Default): object-contain (直立完整顯示), 無旋轉, 無放大
-                    // 電腦版 (md): -rotate-90 (橫放), scale-[1.35] (填滿空白)
+                    // 手機版直立完整顯示，電腦版橫放放大填滿
                     className="object-contain md:-rotate-90 md:scale-[1.35] transition-transform duration-500"
                   />
               </div>
