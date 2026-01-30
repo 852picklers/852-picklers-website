@@ -55,7 +55,6 @@ export const content = {
     },
     pricing: {
       title: "PRE-ORDER NOW",
-      desc: "Secure your piece of Hong Kong pickleball history.",
       series: "PROJECT 852 ．FIRST SERVE",
       cards: [
         {
@@ -150,7 +149,6 @@ export const content = {
     },
     pricing: {
       title: "開放預售",
-      desc: "買的不只是球拍，是頂級工藝與香港人的細節執著。",
       series: "PROJECT 852 ．FIRST SERVE",
       cards: [
         {
