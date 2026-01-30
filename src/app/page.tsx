@@ -60,18 +60,21 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* Floating CTA */}
-      <FloatingCTA text={t.pricing.cards[0].cta} />
+      {/* ★★★ 修改重點：傳入 link 參數 ★★★ */}
+      <FloatingCTA 
+        text={t.pricing.cards[0].cta} 
+        link={t.pricing.cards[0].link} 
+      />
 
       {/* 1. Hero */}
       <HeroScroll t={t} />
 
-      {/* 2. Features (技術解密) - 在 Spec 之前 */}
+      {/* 2. Features */}
       <section id="features" className="w-full">
         <Features data={t.features} lang={lang} />
       </section>
 
-      {/* 3. Spec (規格參數) */}
+      {/* 3. Spec */}
       <section id="specs" className="w-full">
         <Spec data={t.spec} />
       </section>
@@ -81,7 +84,7 @@ export default function Home() {
         <Pricing data={t.pricing} />
       </div>
 
-      {/* 5. Intro (Brand Story) */}
+      {/* 5. Intro */}
       <section id="story" className="w-full">
         <Intro data={t.intro} />
       </section>
