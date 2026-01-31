@@ -10,6 +10,7 @@ import Pricing from "./components/Pricing";
 import FloatingCTA from "./components/FloatingCTA";
 import HeroScroll from "./components/HeroScroll";
 import Footer from "./components/Footer";
+import DesignShowcase from "./components/DesignShowcase"; // ★ 1. 引入組件
 
 export default function Home() {
   const [lang, setLang] = useState<'en' | 'cn'>('cn');
@@ -60,7 +61,7 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* ★★★ 修改重點：傳入 link 參數 ★★★ */}
+      {/* Floating CTA */}
       <FloatingCTA 
         text={t.pricing.cards[0].cta} 
         link={t.pricing.cards[0].link} 
@@ -69,27 +70,32 @@ export default function Home() {
       {/* 1. Hero */}
       <HeroScroll t={t} />
 
-      {/* 2. Features */}
+      {/* ★★★ 2. Design Showcase (新增區塊) ★★★ */}
+      <section id="design" className="w-full">
+        <DesignShowcase data={t.design} />
+      </section>
+
+      {/* 3. Features */}
       <section id="features" className="w-full">
         <Features data={t.features} lang={lang} />
       </section>
 
-      {/* 3. Spec */}
+      {/* 4. Spec */}
       <section id="specs" className="w-full">
         <Spec data={t.spec} />
       </section>
 
-      {/* 4. Pricing */}
+      {/* 5. Pricing */}
       <div id="pricing" className="w-full flex justify-center">
         <Pricing data={t.pricing} />
       </div>
 
-      {/* 5. Intro */}
+      {/* 6. Intro */}
       <section id="story" className="w-full">
         <Intro data={t.intro} />
       </section>
 
-      {/* 6. Footer */}
+      {/* 7. Footer */}
       <Footer data={t.footer} />
 
     </div>

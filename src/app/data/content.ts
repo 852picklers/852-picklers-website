@@ -3,6 +3,7 @@ export const content = {
     nav: { 
       switch: "中文",
       menu: [
+        { label: "DESIGN", target: "design" },   // 新增
         { label: "TECH DECODE", target: "features" },
         { label: "TECH SPECS", target: "specs" },
         { label: "STORY", target: "story" },
@@ -16,6 +17,13 @@ export const content = {
       cta: "PRE-ORDER",
       batch: "First Serve Pre-order",
       bigText: "852 / HK"
+    },
+    // ★★★ 新增：Design 區塊內容 ★★★
+    design: {
+      title: "DESIGN",
+      frontLabel: "FRONT VIEW",
+      backLabel: "BACK VIEW",
+      hint: "TAP TO ENLARGE"
     },
     features: {
       title: "TECH DECODE",
@@ -97,6 +105,7 @@ export const content = {
     nav: { 
       switch: "EN",
       menu: [
+        { label: "設計", target: "design" }, // 新增
         { label: "技術解密", target: "features" },
         { label: "規格參數", target: "specs" },
         { label: "品牌故事", target: "story" },
@@ -110,6 +119,13 @@ export const content = {
       cta: "立即預訂",
       batch: "First Serve 開放預售",
       bigText: "852 / HK"
+    },
+    // ★★★ 新增：Design 區塊內容 ★★★
+    design: {
+      title: "設計",
+      frontLabel: "正面設計",
+      backLabel: "背面設計",
+      hint: "點擊圖片放大"
     },
     features: {
       title: "技術解密",

@@ -24,15 +24,21 @@ export default function HeroScroll({ t }: Props) {
     offset: ["start start", "end end"],
   });
 
-  // --- 動畫參數 ---
-  const opacityHomeKong = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const scaleHomeKong = useTransform(scrollYProgress, [0, 0.4], [1, 0.95]);
-  const opacitySplitView = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
-  const scaleSplitView = useTransform(scrollYProgress, [0.3, 0.6], [1.1, 1]);
-  const pointerEventsStage2 = useTransform(scrollYProgress, (v) => v > 0.3 ? "auto" : "none");
+  // --- 動畫參數 (微調：讓切換發生得更緊湊) ---
+  // 舊設定: [0, 0.4] -> [0.3, 0.6]
+  // 新設定: 保持比例，但因為總高度變矮了，這些百分比代表的物理距離變短了，所以會更快
+  const opacityHomeKong = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scaleHomeKong = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+  
+  // 讓第二畫面稍微早一點點出現，接續感更強
+  const opacitySplitView = useTransform(scrollYProgress, [0.4, 0.7], [0, 1]);
+  const scaleSplitView = useTransform(scrollYProgress, [0.4, 0.7], [1.1, 1]);
+  const pointerEventsStage2 = useTransform(scrollYProgress, (v) => v > 0.4 ? "auto" : "none");
 
   return (
-    <section ref={containerRef} className="relative w-full h-[300vh] bg-[#0f0f0f]">
+    // ★★★ 修改重點：h-[300vh] 改為 h-[200vh] ★★★
+    // 這會大幅減少需要的滾動距離，讓動畫變快
+    <section ref={containerRef} className="relative w-full h-[200vh] bg-[#0f0f0f]">
       
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
         
@@ -72,21 +78,43 @@ export default function HeroScroll({ t }: Props) {
           style={{ opacity: opacitySplitView, scale: scaleSplitView, pointerEvents: pointerEventsStage2 }}
           className="absolute inset-0 z-20 w-full h-full"
         >
+            {/* 右側：雙拍疊放區 */}
             <div className="absolute right-0 bottom-0 lg:top-1/2 lg:-translate-y-1/2 w-full lg:w-[60%] h-[50vh] lg:h-[80%] flex items-end lg:items-center justify-center lg:justify-end pointer-events-none">
-                <div className="relative w-full h-full">
-                    <Image 
-                        src="/paddle-full.png" 
-                        alt="Full View"
-                        fill
-                        className="object-contain object-bottom lg:object-center p-0 lg:p-12" 
-                        priority
-                    />
-                    <div className="hidden lg:block absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent pointer-events-none"></div>
-                    <div className="block lg:hidden absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent pointer-events-none"></div>
+                <div className="relative w-full h-full flex items-end justify-center">
+                    
+                    {/* Back Paddle */}
+                    <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end">
+                        <div className="relative w-full h-full transform -translate-x-20 lg:-translate-x-56 scale-95 origin-bottom brightness-[0.8]">
+                            <Image 
+                                src="/paddle-back.png" 
+                                alt="Back View"
+                                fill
+                                className="object-contain object-bottom lg:object-center p-0 lg:p-12" 
+                            />
+                        </div>
+                    </div>
+
+                    {/* Front Paddle */}
+                    <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end z-10">
+                         <div className="relative w-full h-full transform translate-x-4 lg:translate-x-16 brightness-[0.9] drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                            <Image 
+                                src="/paddle-full.png" 
+                                alt="Full View"
+                                fill
+                                className="object-contain object-bottom lg:object-center p-0 lg:p-12" 
+                                priority
+                            />
+                         </div>
+                    </div>
+
+                    {/* 漸層遮罩 */}
+                    <div className="hidden lg:block absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent pointer-events-none z-20"></div>
+                    <div className="block lg:hidden absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent pointer-events-none z-20"></div>
                 </div>
             </div>
 
-            <div className="absolute left-0 top-0 w-full lg:w-[50%] h-auto lg:h-full flex flex-col justify-start lg:justify-center px-6 md:px-16 pt-28 lg:pt-0 z-10 pointer-events-none lg:pointer-events-auto">
+            {/* 左側：文字區 */}
+            <div className="absolute left-0 top-0 w-full lg:w-[50%] h-auto lg:h-full flex flex-col justify-start lg:justify-center px-6 md:px-16 pt-28 lg:pt-0 z-30 pointer-events-none lg:pointer-events-auto">
                 <div className="w-full flex flex-col items-start text-left pointer-events-auto">
                     <div className="flex items-center gap-3 mb-4 lg:mb-6">
                         <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
@@ -99,11 +127,12 @@ export default function HeroScroll({ t }: Props) {
                         {t.hero.title}
                     </h2>
 
-                    <p className="text-sm md:text-xl font-body text-gray-400 max-w-md leading-relaxed mb-4 border-l-2 border-accent pl-6 text-left whitespace-pre-line lg:drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                        {t.hero.subtitle}
-                    </p>
+                    {t.hero.subtitle && (
+                        <p className="text-sm md:text-xl font-body text-gray-400 max-w-md leading-relaxed mb-4 border-l-2 border-accent pl-6 text-left whitespace-pre-line lg:drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                            {t.hero.subtitle}
+                        </p>
+                    )}
 
-                    {/* ★★★ 新增：Promo Text (首30支限定減$500) ★★★ */}
                     {t.hero.promo && (
                       <div className="mb-8 pl-6">
                         <span className="inline-block bg-accent/10 border border-accent/50 text-accent px-4 py-2 font-heading font-bold uppercase tracking-wider text-sm md:text-base animate-pulse">
@@ -112,7 +141,7 @@ export default function HeroScroll({ t }: Props) {
                       </div>
                     )}
 
-                    <div className="hidden md:block">
+                    <div className="hidden md:block pl-6">
                         <a href="#pricing">
                             <button className="h-12 bg-transparent text-white border border-white/30 px-8 font-heading font-bold text-base uppercase tracking-wider hover:bg-white hover:text-black transition-all duration-300 cursor-pointer skew-x-[-10deg]">
                                 <span className="block skew-x-[10deg]">{t.hero.cta}</span>
