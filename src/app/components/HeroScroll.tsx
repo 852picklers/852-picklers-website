@@ -24,25 +24,20 @@ export default function HeroScroll({ t }: Props) {
     offset: ["start start", "end end"],
   });
 
-  // --- 動畫參數 (微調：讓切換發生得更緊湊) ---
-  // 舊設定: [0, 0.4] -> [0.3, 0.6]
-  // 新設定: 保持比例，但因為總高度變矮了，這些百分比代表的物理距離變短了，所以會更快
+  // --- 動畫參數 ---
   const opacityHomeKong = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scaleHomeKong = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
   
-  // 讓第二畫面稍微早一點點出現，接續感更強
   const opacitySplitView = useTransform(scrollYProgress, [0.4, 0.7], [0, 1]);
   const scaleSplitView = useTransform(scrollYProgress, [0.4, 0.7], [1.1, 1]);
   const pointerEventsStage2 = useTransform(scrollYProgress, (v) => v > 0.4 ? "auto" : "none");
 
   return (
-    // ★★★ 修改重點：h-[300vh] 改為 h-[200vh] ★★★
-    // 這會大幅減少需要的滾動距離，讓動畫變快
     <section ref={containerRef} className="relative w-full h-[200vh] bg-[#0f0f0f]">
       
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
         
-        {/* ================= 畫面 A: HOME KONG 特寫 ================= */}
+        {/* ================= 畫面 A: HOME KONG 特寫 (保持不變) ================= */}
         <motion.div 
           style={{ opacity: opacityHomeKong, scale: scaleHomeKong }}
           className="absolute inset-0 z-10 w-full h-full flex flex-col items-center justify-center bg-[#0f0f0f]"
@@ -82,9 +77,13 @@ export default function HeroScroll({ t }: Props) {
             <div className="absolute right-0 bottom-0 lg:top-1/2 lg:-translate-y-1/2 w-full lg:w-[60%] h-[50vh] lg:h-[80%] flex items-end lg:items-center justify-center lg:justify-end pointer-events-none">
                 <div className="relative w-full h-full flex items-end justify-center">
                     
-                    {/* Back Paddle */}
+                    {/* ★★★ 1. Back Paddle (背面) ★★★ */}
                     <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end">
-                        <div className="relative w-full h-full transform -translate-x-20 lg:-translate-x-56 scale-95 origin-bottom brightness-[0.8]">
+                        {/* 修正重點：
+                           - 手機版 (default): -translate-x-14 (向左移 14)
+                           - 電腦版 (lg): -translate-x-56 (保持不變)
+                        */}
+                        <div className="relative w-full h-full transform -translate-x-14 lg:-translate-x-56 scale-95 origin-bottom brightness-[0.8]">
                             <Image 
                                 src="/paddle-back.png" 
                                 alt="Back View"
@@ -94,9 +93,13 @@ export default function HeroScroll({ t }: Props) {
                         </div>
                     </div>
 
-                    {/* Front Paddle */}
+                    {/* ★★★ 2. Front Paddle (正面) ★★★ */}
                     <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end z-10">
-                         <div className="relative w-full h-full transform translate-x-4 lg:translate-x-16 brightness-[0.9] drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                         {/* 修正重點：
+                            - 手機版 (default): translate-x-14 (向右移 14，與背面平衡)
+                            - 電腦版 (lg): translate-x-16 (保持不變)
+                         */}
+                         <div className="relative w-full h-full transform translate-x-14 lg:translate-x-16 brightness-[0.9] drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
                             <Image 
                                 src="/paddle-full.png" 
                                 alt="Full View"
