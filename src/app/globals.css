@@ -29,3 +29,16 @@
 .writing-vertical-rl {
   writing-mode: vertical-rl;
 }
+
+@media (max-width: 768px) {
+  /* iPhone Safari 對過強的毛玻璃效果非常吃力，我們強制降級 */
+  .backdrop-blur-xl {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+  
+  /* 禁用手機端耗電的平滑滾動，改用原生滾動 */
+  html {
+    scroll-behavior: auto !important;
+  }
+}

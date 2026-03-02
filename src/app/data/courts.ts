@@ -1,4 +1,45 @@
-export async function getCourtsData() {
+// src/app/data/courts.ts
+
+// ★ 必須確保有 export，否則 CourtsClient 會報 Build Error
+export const DISTRICTS = {
+  HK: ["中西區", "灣仔區", "東區", "南區"],
+  KLN: ["油尖旺區", "深水埗區", "九龍城區", "黃大仙區", "觀塘區"],
+  NT: ["葵青區", "荃灣區", "屯門區", "元朗區", "北區", "大埔區", "沙田區", "西貢區", "離島區"]
+};
+
+export type RegionKey = keyof typeof DISTRICTS;
+
+export interface Court {
+  id: string; 
+  region: RegionKey;
+  district: string;
+  googleMapLink: string;
+  bookingLink: string; 
+  coverImage: string;
+  walkMins: number;
+  name: string;
+  address: string;
+  mtr: string;
+  exit: string;
+  openHours: string;
+  bookingMethod: string;
+  facilities: string[];
+  priceInfo: string;
+  membership: string; 
+  en: {
+    name: string;
+    address: string;
+    mtr: string;
+    exit: string;
+    openHours: string;
+    bookingMethod: string;
+    facilities: string[];
+    priceInfo: string;
+    membership: string; 
+  }
+}
+
+export async function getCourtsData(): Promise<Court[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://852picklers.com';
     const response = await fetch(`${baseUrl}/api/courts`, { next: { revalidate: 60 } });
@@ -20,7 +61,7 @@ export async function getCourtsData() {
       const id = rowZh.id ? String(rowZh.id).trim() : "";
       const rowEn = enDataMap[id] || {}; 
 
-      // 核心優化：更嚴謹的路徑處理，移除多餘空格與斜槓
+      // 圖片優化：去除空格與確保路徑正確
       let imagePath = String(rowZh.coverImage || rowZh.coverimage || "").trim();
       if (imagePath && !imagePath.startsWith('http')) {
         imagePath = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
@@ -33,7 +74,7 @@ export async function getCourtsData() {
 
       return {
         id,
-        region: (rowZh.region as any) || "NT",
+        region: (rowZh.region as RegionKey) || "NT",
         district: rowZh.district || "",
         googleMapLink: rowZh.googleMapLink || rowZh.googlemaplink || "",
         bookingLink: (rowZh.bookingLink || rowZh.bookinglink || "").trim(),
@@ -62,7 +103,7 @@ export async function getCourtsData() {
       };
     });
   } catch (error) {
-    console.error("Data protection error:", error);
+    console.error("Data error:", error);
     return []; 
   }
 }
