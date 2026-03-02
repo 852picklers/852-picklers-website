@@ -41,20 +41,19 @@ export interface Court {
   }
 }
 
-export async function getCourtsData(): Promise<Court[]> {
+export async function getCourtsData() {
   try {
-    // ★ 核心修正：伺服器端 fetch 必須使用絕對路徑
-    // 如果您有設定環境變數 NEXT_PUBLIC_SITE_URL 則優先使用，否則根據環境自動判斷
+    // 獲取基礎 URL（優先使用環境變數）
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
                     (process.env.NODE_ENV === 'development' 
                       ? 'http://localhost:3000' 
-                      : 'https://www.852picklers.com');
+                      : 'https://852picklers.com');
 
     const response = await fetch(`${baseUrl}/api/courts`, { 
       next: { revalidate: 60 } 
     });
 
-    if (!response.ok) throw new Error("Data protection active: Failed to fetch from internal API");
+    if (!response.ok) throw new Error("Failed to fetch from internal API");
     
     const { zh, en } = await response.json();
 
