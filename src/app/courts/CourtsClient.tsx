@@ -34,6 +34,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
     setActiveDistrict("ALL");
   };
 
+  // ★ 更新後的精簡版文案
   const ui = {
     ZH: {
       title: "香港匹克球場地整合", subtitle: "全港匹克球場資訊與預訂指南",
@@ -56,7 +57,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
            <p className="text-gray-400 font-body text-xs md:text-sm tracking-[0.2em] uppercase mt-3">{ui.subtitle}</p>
         </header>
 
-        {/* 篩選器：加大字體確保拇指好點擊 */}
+        {/* 篩選器：加大字體並套用新文案 */}
         <div className="flex flex-col gap-6 border-b border-white/5 pb-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap gap-3">
@@ -86,7 +87,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
             )}
         </div>
 
-        {/* 列表渲染：兩欄式佈局與完整卡片資訊 */}
+        {/* 兩欄式列表：優化設施標籤可讀性 */}
         <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filteredCourts.map((court) => {
             const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
@@ -109,8 +110,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                   </div>
                   <div className="p-3 md:p-6 flex flex-col flex-grow gap-2 md:gap-4">
                       <div className="flex items-center gap-1">
-                         {/* 恢復 [Region | District] 標籤設計 */}
-                         <span className="text-[8px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase font-bold tracking-tighter">
+                         <span className="text-[9px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase font-bold tracking-tighter">
                            {court.region} {court.district ? `| ${cDistrict}` : ""}
                          </span>
                       </div>
@@ -119,14 +119,14 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                         {cName}
                       </h3>
 
-                      {/* 恢復地址與設施顯示 */}
                       <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1 opacity-60">
                         {cAddress}
                       </p>
 
-                      <div className="flex flex-wrap gap-1 mt-auto pt-2 border-t border-white/5">
+                      {/* 設施標籤：高對比配色 (深灰底 + 淺灰白字) */}
+                      <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-white/10">
                         {(cFacilities || []).slice(0, 2).map((fac, idx) => (
-                          <span key={idx} className="text-[8px] md:text-[9px] font-mono text-gray-600 border border-white/5 px-1.5 py-0.5 rounded-sm whitespace-nowrap">
+                          <span key={idx} className="text-[10px] md:text-[11px] font-bold text-gray-200 bg-[#222] border border-white/10 px-2 py-1 rounded-sm whitespace-nowrap">
                             {fac}
                           </span>
                         ))}

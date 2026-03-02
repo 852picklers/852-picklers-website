@@ -18,7 +18,7 @@ export default function StickyBanner() {
       btn: "立即入手"
     },
     EN: {
-      mobileTag: "Paddle for Hong Kongers 🇭🇰",
+      mobileTag: "PADDLE FOR HK-ERS 🇭🇰",
       desktopTag: "TOP SPECS FOR HONG KONGERS 🇭🇰",
       desktopMain: "Got a court but no paddle?",
       sub: "Limited offer HKD 888",
@@ -37,7 +37,7 @@ export default function StickyBanner() {
        >
           <Link href="/shop" className="relative max-w-[1400px] mx-auto flex items-center h-32 md:h-24 px-4 md:px-8 cursor-pointer group">
              
-             {/* ★ 球拍破框效果：底部對齊，頭部向上突出 */}
+             {/* 球拍破框效果：底部對齊，頭部向上突出 */}
              <div className="absolute -top-12 bottom-0 left-2 md:left-6 w-36 md:w-48 z-20 pointer-events-none drop-shadow-[0_15px_25px_rgba(204,255,0,0.4)]">
                 <Image 
                   src="/home-gear.png" 
@@ -50,39 +50,36 @@ export default function StickyBanner() {
                 />
              </div>
 
-             {/* 內容區塊：手機版 ml-[135px] 並靠右對齊 (items-end) 避開球拍 */}
-             <div className="w-full flex md:flex-row flex-col items-end md:items-center justify-between ml-[135px] md:ml-[200px] py-2 md:py-0">
+             {/* 內容區塊：強勢靠右對齊 (items-end) 並增加右邊距 */}
+             <div className="w-full flex md:flex-row flex-col items-end md:items-center justify-between ml-[130px] md:ml-[200px] py-3 md:py-0">
                 
-                <div className="flex flex-col items-end md:items-start justify-center pr-2">
-                   {/* Tag：手機版放大字體 (text-xs) */}
-                   <span className="text-[#ccff00] font-bold tracking-widest uppercase text-xs md:text-xs mb-1 opacity-90">
+                <div className="flex flex-col items-end md:items-start justify-center pr-1 text-right md:text-left">
+                   {/* ★ Tag：改為白色、加大字體 (text-[11px])，與按鈕顏色區隔 */}
+                   <span className="text-white font-bold tracking-widest uppercase text-[11px] md:text-xs mb-1 opacity-100">
                       <span className="md:hidden">{ui.mobileTag}</span>
                       <span className="hidden md:inline">{ui.desktopTag}</span>
                    </span>
                    
-                   {/* Main Title：僅電腦版顯示 */}
                    <h4 className="hidden md:block text-white font-heading font-bold text-xl lg:text-2xl uppercase leading-tight tracking-tighter mb-1">
                       {ui.desktopMain}
                    </h4>
 
-                   {/* Sub & CTA：手機版垂直排列，CTA 文字加大 */}
-                   <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 items-end">
-                      <p className="text-white font-bold text-sm md:text-sm font-mono">
+                   <div className="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-4 items-end">
+                      {/* Sub：字體稍縮小一點，突顯 Tag */}
+                      <p className="text-white/60 font-bold text-[10px] md:text-sm font-mono">
                          {ui.sub}
                       </p>
-                      {/* 手機版顯示底線連結，電腦版隱藏（改用實體按鈕） */}
-                      <span className="md:hidden text-[#ccff00] text-[13px] font-black uppercase tracking-widest underline underline-offset-4 decoration-2">
+                      <span className="md:hidden text-[#ccff00] text-[14px] font-black uppercase tracking-widest underline underline-offset-4 decoration-2">
                         {ui.cta}
                       </span>
                    </div>
                 </div>
                 
-                {/* ★ 按鈕：僅在電腦版顯示 */}
+                {/* 電腦版按鈕保持螢光綠 */}
                 <div className="hidden md:block shrink-0">
                    <div className="bg-[#ccff00] transform -skew-x-[12deg] shadow-[0_0_20px_rgba(204,255,0,0.4)] group-hover:scale-105 transition-all duration-200 px-10 py-3.5">
                       <div className="transform skew-x-[12deg] text-black text-base font-black uppercase tracking-widest flex items-center gap-2">
                          {ui.btn}
-                         <span className="group-hover:translate-x-1 transition-transform">→</span>
                       </div>
                    </div>
                 </div>
