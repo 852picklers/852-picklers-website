@@ -102,36 +102,44 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
         </div>
 
         {/* 列表渲染 */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {filteredCourts.map((court) => {
-            const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
-            const cAddress = lang === "EN" && court.en.address ? court.en.address : court.address;
+        <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
+  {filteredCourts.map((court) => {
+    const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
+    const cAddress = lang === "EN" && court.en.address ? court.en.address : court.address;
 
-            return (
-              <Link href={`/courts/${court.id}`} key={court.id} className="group">
-                <div className="flex flex-col bg-[#0a0a0a] border border-white/10 rounded-sm overflow-hidden transition-all duration-300 hover:border-neon-red h-full">
-                  <div className="relative w-full aspect-[4/3] bg-black">
-                     <Image 
-                      src={court.coverImage || "/home-court.png"} 
-                      alt={cName} 
-                      fill 
-                      quality={60} // ★ 代碼層面壓縮
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
-                     />
-                  </div>
-                  <div className="p-5 flex flex-col flex-grow gap-3">
-                      <span className="text-[10px] text-neon-red uppercase tracking-widest font-bold">
-                        {court.region} {court.district ? `| ${lang === "EN" ? DISTRICT_I18N[court.district] || court.district : court.district}` : ""}
-                      </span>
-                      <h3 className="text-xl font-heading font-bold text-white group-hover:text-neon-red">{cName}</h3>
-                      <p className="text-gray-400 text-xs line-clamp-2">{cAddress}</p>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </section>
+    return (
+      <Link href={`/courts/${court.id}`} key={court.id} className="group">
+        <div className="flex flex-col bg-[#0a0a0a] border border-white/10 rounded-sm overflow-hidden transition-all duration-300 hover:border-neon-red h-full">
+          {/* 圖片比例調整為 1:1 或 4:3 節省高度 */}
+          <div className="relative w-full aspect-square md:aspect-[4/3] bg-black">
+             <Image 
+              src={court.coverImage || "/home-court.png"} 
+              alt={cName} 
+              fill 
+              quality={60}
+              sizes="(max-width: 768px) 50vw, 33vw"
+              className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" 
+             />
+          </div>
+          {/* 縮減手機版的 Padding (p-3) 與字體 */}
+          <div className="p-3 md:p-6 flex flex-col flex-grow gap-2 md:gap-4">
+              <div className="flex items-center gap-1">
+                 <span className="text-[8px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase tracking-widest font-bold">
+                   {court.region}
+                 </span>
+              </div>
+              <h3 className="text-[13px] md:text-2xl font-heading font-bold text-white group-hover:text-neon-red transition-colors line-clamp-1 md:line-clamp-none">
+                {cName}
+              </h3>
+              <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1 opacity-60">
+                {cAddress}
+              </p>
+          </div>
+        </div>
+      </Link>
+    );
+  })}
+</section>
       </main>
 
       <Footer data={footerData} />
