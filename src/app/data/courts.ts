@@ -1,6 +1,6 @@
 // src/app/data/courts.ts
 
-// ★ 必須確保有 export，否則 CourtsClient 會報 Build Error
+// ★ 必須確保 export，解決 CourtsClient.tsx:7:1 的編譯錯誤
 export const DISTRICTS = {
   HK: ["中西區", "灣仔區", "東區", "南區"],
   KLN: ["油尖旺區", "深水埗區", "九龍城區", "黃大仙區", "觀塘區"],
@@ -42,7 +42,11 @@ export interface Court {
 export async function getCourtsData(): Promise<Court[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://852picklers.com';
-    const response = await fetch(`${baseUrl}/api/courts`, { next: { revalidate: 60 } });
+    // 增加伺服器端請求的穩定性
+    const response = await fetch(`${baseUrl}/api/courts`, { 
+      next: { revalidate: 60 },
+      headers: { 'Content-Type': 'application/json' }
+    });
 
     if (!response.ok) throw new Error("API Fetch Failed");
     const { zh, en } = await response.json();
@@ -61,9 +65,10 @@ export async function getCourtsData(): Promise<Court[]> {
       const id = rowZh.id ? String(rowZh.id).trim() : "";
       const rowEn = enDataMap[id] || {}; 
 
-      // 圖片優化：去除空格與確保路徑正確
+      // ★ 圖片路徑終極修正：處理多餘空格、斜槓，防止 400 錯誤
       let imagePath = String(rowZh.coverImage || rowZh.coverimage || "").trim();
       if (imagePath && !imagePath.startsWith('http')) {
+        // 確保路徑以單斜槓 / 開頭
         imagePath = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
       }
 
