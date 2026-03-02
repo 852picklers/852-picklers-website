@@ -37,7 +37,7 @@ export default function StickyBanner() {
        >
           <Link href="/shop" className="relative max-w-[1400px] mx-auto flex items-center h-28 md:h-24 px-4 md:px-8 cursor-pointer group">
              
-             {/* 球拍破框效果 */}
+             {/* 球拍破框：底部切齊 Banner 邊緣 */}
              <div className="absolute -top-12 bottom-0 left-2 md:left-6 w-36 md:w-48 z-20 pointer-events-none drop-shadow-[0_15px_25px_rgba(204,255,0,0.4)]">
                 <Image 
                   src="/home-gear.png" 
@@ -50,12 +50,12 @@ export default function StickyBanner() {
                 />
              </div>
 
-             {/* ★ 內容區塊：極大化字體，壓縮行間距 ★ */}
-             <div className="w-full flex md:flex-row flex-col items-end md:items-center justify-between ml-[125px] md:ml-[200px]">
+             {/* ★ 內容區塊：手機版 Tag 成為絕對主角 ★ */}
+             <div className="w-full flex md:flex-row flex-col items-end md:items-center justify-between ml-[120px] md:ml-[200px]">
                 
-                <div className="flex flex-col items-end md:items-start justify-center text-right md:text-left leading-tight">
-                   {/* Tag: 增加到 15px，極粗體 */}
-                   <span className="text-white font-black tracking-tighter uppercase text-[15px] md:text-xs mb-0.5">
+                <div className="flex flex-col items-end md:items-start justify-center text-right md:text-left">
+                   {/* Tag: 提升到 20px，使用 font-black 並壓縮字距 tracking-tighter */}
+                   <span className="text-white font-black tracking-tighter uppercase text-[20px] md:text-xs leading-none mb-1">
                       <span className="md:hidden">{ui.mobileTag}</span>
                       <span className="hidden md:inline">{ui.desktopTag}</span>
                    </span>
@@ -64,12 +64,12 @@ export default function StickyBanner() {
                       {ui.desktopMain}
                    </h4>
 
-                   {/* Sub & CTA: 緊湊排列，CTA 放大到 18px */}
+                   {/* Sub & CTA: 緊湊排列，維持高對比度 */}
                    <div className="flex flex-col md:flex-row md:items-center gap-0 md:gap-4 items-end">
-                      <p className="text-white/80 font-bold text-[14px] md:text-sm font-mono">
+                      <p className="text-white/70 font-bold text-[13px] md:text-sm font-mono leading-none">
                          {ui.sub}
                       </p>
-                      <span className="md:hidden text-[#ccff00] text-[18px] font-black uppercase tracking-widest underline underline-offset-4 decoration-2">
+                      <span className="md:hidden text-[#ccff00] text-[17px] font-black uppercase tracking-widest underline underline-offset-4 decoration-2 mt-1.5">
                         {ui.cta}
                       </span>
                    </div>
