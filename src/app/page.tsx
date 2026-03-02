@@ -1,103 +1,197 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { content } from "./data/content";
-import Intro from "./components/Intro";
-import Features from "./components/Features";
-import Spec from "./components/Spec";
-import Pricing from "./components/Pricing";
-import FloatingCTA from "./components/FloatingCTA";
-import HeroScroll from "./components/HeroScroll";
-import Footer from "./components/Footer";
-import DesignShowcase from "./components/DesignShowcase"; // ★ 1. 引入組件
+import { useLanguage } from "./context/LanguageContext"; // 引入全局語言狀態
 
 export default function Home() {
-  const [lang, setLang] = useState<'en' | 'cn'>('cn');
-  const t = content[lang];
-  const toggleLang = () => setLang(prev => prev === 'en' ? 'cn' : 'en');
+  const { lang } = useLanguage(); // 讀取當前語言
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  // 雙語字典，根據您提供的最新文案更新
+  const ui = {
+    ZH: {
+      club: "852 Picklers 致力推動香港匹克球文化",
+      cards: {
+        courts: { title: "香港匹克球場地整合", subtitle: "球場資訊與預訂指南" },
+        shop: { title: "852 PICKLERS 裝備商店", subtitle: "匹克球裝備" }
+      },
+      whoWeAre: "WHO WE ARE",
+      slogan: "Born in 852.\nBuilt for the Court.",
+      desc: "852 Picklers 是一個屬於香港人的匹克球品牌。我們致力於推廣這項新興運動，並為香港匹克球注入主場風格。",
+      readStory: "品牌故事 →",
+      contact: "聯絡我們"
+    },
+    EN: {
+      club: "HK Pickleball Culture & Community",
+      cards: {
+        courts: { title: "HK PICKLERS COURTS", subtitle: "Courts Details & Booking Guide" },
+        shop: { title: "852 PICKLERS SHOP", subtitle: "PICKLEBALL GEAR" }
+      },
+      whoWeAre: "WHO WE ARE",
+      slogan: "Born in 852.\nBuilt for the Court.",
+      desc: "852 Picklers is a pickleball brand dedicated to Hong Kongers. We aim to promote this fast-growing sport and to inject \"852 Soul\" into every game.",
+      readStory: "Read Story →",
+      contact: "CONTACT US"
     }
-  };
+  }[lang];
+
+  // 卡片數據：已移除 Game Rules，僅保留 Courts 與 Shop
+  const CARDS = [
+    {
+      id: "courts",
+      anchor: "courts-card",
+      title: ui.cards.courts.title,
+      subtitle: ui.cards.courts.subtitle,
+      link: "/courts",
+      image: "/home-court.png",
+      titleColor: "text-neon-red",
+      hoverText: "group-hover:text-neon-red",
+      hoverLine: "group-hover:bg-neon-red",
+      hoverBorder: "group-hover:border-neon-red",
+      hoverShadow: "group-hover:shadow-[0_0_50px_rgba(255,0,60,0.4)]",
+      hoverBg: "group-hover:bg-neon-red/5",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h18v18H3z"/><path d="M21 9H3"/><path d="M21 15H3"/><path d="M12 3v18"/></svg>
+      )
+    },
+    {
+      id: "shop",
+      anchor: "gear-card",
+      title: ui.cards.shop.title,
+      subtitle: ui.cards.shop.subtitle,
+      link: "/shop",
+      image: "/home-gear.png",
+      titleColor: "text-neon-green",
+      hoverText: "group-hover:text-neon-green",
+      hoverLine: "group-hover:bg-neon-green",
+      hoverBorder: "group-hover:border-neon-green",
+      hoverShadow: "group-hover:shadow-[0_0_50px_rgba(204,255,0,0.4)]",
+      hoverBg: "group-hover:bg-neon-green/5",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      )
+    }
+  ];
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-background selection:bg-accent selection:text-black relative">
+    <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden relative">
       
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-black/90 backdrop-blur-md border-b border-white/10 transition-all duration-300">
-        <div 
-          className="relative w-20 h-20 md:w-24 md:h-24 cursor-pointer hover:scale-105 transition-transform duration-300"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-           <Image 
-             src="/logo.png" 
-             alt="852 Picklers Logo" 
-             fill 
-             className="object-contain object-left" 
-           />
-        </div>
-
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-            {t.nav.menu && t.nav.menu.map((item: any, index: number) => (
-                <button
-                    key={index}
-                    onClick={() => scrollToSection(item.target)}
-                    className="text-xs lg:text-sm font-bold text-gray-400 hover:text-accent uppercase tracking-widest transition-colors"
-                >
-                    {item.label}
-                </button>
-            ))}
-        </div>
-
-        <button 
-          onClick={toggleLang}
-          className="font-body text-xs font-bold uppercase tracking-widest border border-white/20 text-white px-6 py-2 hover:bg-accent hover:text-black hover:border-accent transition-all duration-300 rounded-sm"
-        >
-          {t.nav.switch}
-        </button>
-      </nav>
-
-      {/* Floating CTA */}
-      <FloatingCTA 
-        text={t.pricing.cards[0].cta} 
-        link={t.pricing.cards[0].link} 
-      />
-
-      {/* 1. Hero */}
-      <HeroScroll t={t} />
-
-      {/* ★★★ 2. Design Showcase (新增區塊) ★★★ */}
-      <section id="design" className="w-full">
-        <DesignShowcase data={t.design} />
-      </section>
-
-      {/* 3. Features */}
-      <section id="features" className="w-full">
-        <Features data={t.features} lang={lang} />
-      </section>
-
-      {/* 4. Spec */}
-      <section id="specs" className="w-full">
-        <Spec data={t.spec} />
-      </section>
-
-      {/* 5. Pricing */}
-      <div id="pricing" className="w-full flex justify-center">
-        <Pricing data={t.pricing} />
+      {/* 背景光影效果 */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+         <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-accent/5 blur-[120px] rounded-full"></div>
+         <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-neon-blue/5 blur-[120px] rounded-full"></div>
       </div>
 
-      {/* 6. Intro */}
-      <section id="story" className="w-full">
-        <Intro data={t.intro} />
-      </section>
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-12 flex flex-col gap-16 md:gap-24">
+        
+        {/* 頂部標題區塊 */}
+        <header className="flex flex-col items-center justify-center pt-20 md:pt-28 pb-4">
+           <div className="flex items-center justify-center gap-4 md:gap-6">
+               <div className="relative w-16 h-16 md:w-20 md:h-20 drop-shadow-[0_0_15px_rgba(204,255,0,0.3)]">
+                  <Image src="/logo.png" alt="Logo" fill className="object-contain" />
+               </div>
+               <h1 className="text-5xl md:text-7xl font-heading font-bold text-white tracking-tighter text-center drop-shadow-2xl">
+                  852 Picklers
+               </h1>
+           </div>
+           <p className="text-accent font-mono text-xs md:text-sm tracking-[0.4em] uppercase mt-4 font-bold text-center">
+              {ui.club}
+           </p>
+        </header>
 
-      {/* 7. Footer */}
-      <Footer data={t.footer} />
+        {/* 卡片區塊：改為 md:grid-cols-2 以適應隱藏規則頁面後的排版 */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 w-full pb-10">
+          {CARDS.map((item, index) => (
+            <Link href={item.link} key={item.id} id={item.anchor} className="group block w-full">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.5 }}
+                className={`
+                  relative aspect-square w-full
+                  border border-white/10 bg-[#0a0a0a] 
+                  flex flex-col items-center justify-center text-center p-6
+                  transition-all duration-500 rounded-sm overflow-hidden
+                  ${item.hoverBorder} ${item.hoverShadow} ${item.hoverBg} hover:-translate-y-2
+                `}
+              >
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                  <Image src={item.image} alt={item.title} fill className="object-cover opacity-40 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                
+                <div className="relative z-10 flex flex-col items-center gap-4">
+                    <div className="text-white transition-all duration-500 transform group-hover:scale-110 group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+                      {item.icon}
+                    </div>
+                    <h2 className={`text-3xl md:text-4xl lg:text-5xl font-heading font-bold uppercase tracking-tighter drop-shadow-lg transition-colors ${item.titleColor}`}>
+                      {item.title}
+                    </h2>
+                    <div className="flex items-center gap-3">
+                      <span className={`w-8 h-[2px] bg-white/20 transition-all duration-500 group-hover:w-12 ${item.hoverLine}`}></span>
+                      <p className={`text-gray-400 font-body text-xs tracking-[0.2em] uppercase font-bold transition-colors ${item.hoverText}`}>
+                          {item.subtitle}
+                      </p>
+                      <span className={`w-8 h-[2px] bg-white/20 transition-all duration-500 group-hover:w-12 ${item.hoverLine}`}></span>
+                    </div>
+                </div>
 
+                <div className={`absolute top-2 left-2 w-3 h-3 border-t border-l border-white/30 transition-all duration-500 opacity-50 group-hover:opacity-100 group-hover:w-6 group-hover:h-6 ${item.hoverBorder}`}></div>
+                <div className={`absolute bottom-2 right-2 w-3 h-3 border-b border-r border-white/30 transition-all duration-500 opacity-50 group-hover:opacity-100 group-hover:w-6 group-hover:h-6 ${item.hoverBorder}`}></div>
+              </motion.div>
+            </Link>
+          ))}
+        </section>
+
+        {/* 品牌故事與聯絡資訊區塊 */}
+        <section id="footer-section" className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-white/10 pt-16 pb-12 w-full">
+          <div className="flex flex-col gap-6">
+              <span className="text-accent font-bold tracking-widest uppercase text-sm flex items-center gap-2">
+                <span className="w-2 h-2 bg-accent rounded-full"></span>
+                {ui.whoWeAre}
+              </span>
+              <h3 className="text-2xl md:text-3xl font-heading font-bold text-white uppercase leading-tight whitespace-pre-line">
+                {ui.slogan}
+              </h3>
+              <div className="text-gray-400 font-body text-sm leading-relaxed space-y-4 max-w-lg">
+                 <p>{ui.desc}</p>
+              </div>
+              <div className="mt-2">
+                 <Link href="/about" className="text-white border-b border-accent pb-1 hover:text-accent transition-colors text-xs uppercase tracking-widest inline-block">
+                    {ui.readStory}
+                 </Link>
+              </div>
+          </div>
+
+          <div className="flex flex-col gap-6">
+              <span className="text-neon-blue font-bold tracking-widest uppercase text-sm flex items-center gap-2">
+                <span className="w-2 h-2 bg-neon-blue rounded-full"></span>
+                {ui.contact}
+              </span>
+              <div className="space-y-6">
+                 <div>
+                    <h4 className="text-white font-bold uppercase tracking-wider mb-1 text-xs opacity-50">Email</h4>
+                    <a href="mailto:enquiry@852picklers.com" className="text-gray-300 hover:text-white transition-colors text-sm font-mono">
+                      enquiry@852picklers.com
+                    </a>
+                 </div>
+                 <div>
+                    <h4 className="text-white font-bold uppercase tracking-wider mb-1 text-xs opacity-50">Social Media</h4>
+                    <a href="https://instagram.com/852.picklers" target="_blank" className="text-gray-300 hover:text-white transition-colors text-sm font-mono flex items-center gap-2">
+                      @852.picklers
+                    </a>
+                 </div>
+              </div>
+              <div className="mt-auto">
+                 <p className="text-gray-600 text-[10px] font-mono uppercase tracking-widest">
+                   © 2026 852 Picklers.
+                 </p>
+              </div>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 }

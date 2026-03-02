@@ -69,7 +69,7 @@ export const content = {
           name: "「HOME KONG」",
           price: "HKD 888",
           originalPrice: "HKD 1,388",
-          discountNote: "Exclusive for First 30 Units",
+          discountNote: "Exclusive Offer",
           freeShipping: "Free Shipping in HK",
           features: [],
           cta: "Pre-Order",
@@ -81,9 +81,9 @@ export const content = {
     },
     intro: {
       label: "Brand Story",
-      title: "\"It's not just a duel of skills, but a showcase of style.\"",
-      text1: "852 Picklers was born in 2025 from a simple belief: Hong Kong people deserve a paddle that truly represents this city. Tired of cookie-cutter designs, we are determined to inject a unique \"852 Soul\" into the rapidly growing pickleball scene.",
-      text2: "We insist on \"Pro Specs, No Compromise\". From T700 raw carbon to hybrid core tech, every detail benchmarks against international flagship standards. This is not just gear; it's a comrade carrying Hong Kong's neon culture and gritty spirit. Whether you're a rookie or a veteran, holding an 852 Picklers paddle means holding not just feel, but home court confidence.",
+      title: "\"It's not just a game of skill; it's a statement of style.\"",
+      text1: "Born in 2025, 852 Picklers started with a simple belief: Hong Kongers deserve a paddle that represents our city. We’re here to inject 852 Soul into every game.",
+      text2: "We stand by 'Quality Materials, No Compromise.' From T700 raw carbon to hybrid core tech, every detail meets the standards of high-end international paddles.",
       quote: "Home Court. Strong Serve."
     },
     footer: {
@@ -115,7 +115,7 @@ export const content = {
     hero: {
       label: "852 PICKLERS ．FIRST SERVE",
       title: "主場風格\n頂級配置",
-      promo: "首 30 支限定優惠・立減 $500",
+      promo: "限定優惠・立減 $500",
       cta: "立即預訂",
       batch: "First Serve 開放預售",
       bigText: "852 / HK"
@@ -183,9 +183,9 @@ export const content = {
     },
     intro: {
       label: "品牌故事",
-      title: "球場上不只技術對決，更可是個人風格展現。",
-      text1: "852 Picklers 誕生於 2025 年，源於一個簡單的信念：香港人值得擁有一塊真正代表這座城市的球拍。我們厭倦了千篇一律的設計，決心為快速發展的香港匹克球運動注入獨特的「852 靈魂」。",
-      text2: "我們堅持「頂級配置，拒絕妥協」。從 T700 原生碳纖面到混合核心科技，每一個細節都對標國際旗艦標準。這不只是一件裝備，而是承載著香港霓虹文化與硬淨精神的戰友。無論你是剛入門的新手，還是追求極致的老手，拿起 852 Picklers，你握住的不只是手感，更是主場的自信。",
+      title: "球場上不只技術對決，更是風格的展現。",
+      text1: "852 Picklers 誕生於 2025 年，源於一個簡單的信念：香港人值得擁有一塊代表這座城市的球拍。我們決心為這項運動注入專屬的「852 靈魂」。",
+      text2: "我們堅持「真材實料，絕不妥協」。從 T700 原生碳纖到混合核心科技，每一個細節都對標國際大牌的高端配置。拿起它，握住主場的自信。",
       quote: "香港主場，強勢出擊。"
     },
     footer: {
