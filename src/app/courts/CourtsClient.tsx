@@ -37,11 +37,11 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
   const ui = {
     ZH: {
       title: "香港匹克球場地整合", subtitle: "全港匹克球場資訊與預訂指南",
-      all: "全部 ALL", regionHK: "香港島 HK", regionKLN: "九龍 KLN", regionNT: "新界 NT", allDistricts: "全區",
+      all: "全部", regionHK: "香港島", regionKLN: "九龍", regionNT: "新界", allDistricts: "全區",
     },
     EN: {
       title: "HK PICKLEBALL COURTS", subtitle: "HK Pickleball Courts & Booking Guide",
-      all: "ALL COURTS", regionHK: "HK ISLAND", regionKLN: "KOWLOON", regionNT: "NEW TERRITORIES", allDistricts: "ALL DISTRICTS",
+      all: "ALL", regionHK: "HK ISLAND", regionKLN: "KOWLOON", regionNT: "NEW TERRITORIES", allDistricts: "ALL DISTRICTS",
     }
   }[lang];
 
@@ -56,7 +56,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
            <p className="text-gray-400 font-body text-xs md:text-sm tracking-[0.2em] uppercase mt-3">{ui.subtitle}</p>
         </header>
 
-        {/* 篩選器：加大字體與間距 */}
+        {/* 篩選器：加大字體確保拇指好點擊 */}
         <div className="flex flex-col gap-6 border-b border-white/5 pb-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap gap-3">
@@ -86,11 +86,13 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
             )}
         </div>
 
-        {/* 列表渲染：兩欄式並恢復 District 標籤 */}
+        {/* 列表渲染：兩欄式佈局與完整卡片資訊 */}
         <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filteredCourts.map((court) => {
             const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
+            const cAddress = lang === "EN" && court.en.address ? court.en.address : court.address;
             const cDistrict = lang === "EN" ? DISTRICT_I18N[court.district] || court.district : court.district;
+            const cFacilities = lang === "EN" && court.en.facilities?.length > 0 ? court.en.facilities : court.facilities;
 
             return (
               <Link href={`/courts/${court.id}`} key={court.id} className="group">
@@ -105,18 +107,30 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                       className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
                      />
                   </div>
-                  <div className="p-3 md:p-6 flex flex-col flex-grow gap-2">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                         <span className="text-[9px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase font-bold">
-                           {court.region}
-                         </span>
-                         <span className="text-[9px] md:text-[10px] border border-white/10 text-gray-500 px-1.5 py-0.5 rounded-sm uppercase font-bold">
-                           {cDistrict}
+                  <div className="p-3 md:p-6 flex flex-col flex-grow gap-2 md:gap-4">
+                      <div className="flex items-center gap-1">
+                         {/* 恢復 [Region | District] 標籤設計 */}
+                         <span className="text-[8px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase font-bold tracking-tighter">
+                           {court.region} {court.district ? `| ${cDistrict}` : ""}
                          </span>
                       </div>
-                      <h3 className="text-[14px] md:text-2xl font-heading font-bold text-white group-hover:text-neon-red transition-colors line-clamp-2">
+                      
+                      <h3 className="text-[14px] md:text-2xl font-heading font-bold text-white group-hover:text-neon-red transition-colors line-clamp-1">
                         {cName}
                       </h3>
+
+                      {/* 恢復地址與設施顯示 */}
+                      <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1 opacity-60">
+                        {cAddress}
+                      </p>
+
+                      <div className="flex flex-wrap gap-1 mt-auto pt-2 border-t border-white/5">
+                        {(cFacilities || []).slice(0, 2).map((fac, idx) => (
+                          <span key={idx} className="text-[8px] md:text-[9px] font-mono text-gray-600 border border-white/5 px-1.5 py-0.5 rounded-sm whitespace-nowrap">
+                            {fac}
+                          </span>
+                        ))}
+                      </div>
                   </div>
                 </div>
               </Link>
