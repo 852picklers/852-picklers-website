@@ -16,19 +16,18 @@ export const metadata: Metadata = {
   description: "852 Picklers 提供全港最齊全的匹克球場地資訊及預訂指引。專為香港球友打造的講究用料與主場風格。",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-HK">
+      <head>
+        {/* ★ 強制預加載 Logo，解決 PageSpeed 提到的 Discovery 延遲 */}
+        <link rel="preload" href="/logo.png" as="image" fetchPriority="high" />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <LanguageProvider>
           <Navbar />
           {children}
         </LanguageProvider>
-        {/* ★ GA4 放在 body 底部以降低渲染阻塞 */}
         <GoogleAnalytics gaId="G-29Y1HRESBK" />
       </body>
     </html>

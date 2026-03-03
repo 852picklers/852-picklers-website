@@ -1,44 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color Palette: Premium Sports Dark Mode */
-  --color-background: #0f0f0f; /* Deep Charcoal */
-  --color-foreground: #ffffff; /* Pure White */
-  
-  --color-muted: #1f1f1f;      /* Lighter Charcoal for cards/borders */
-  --color-muted-foreground: #a3a3a3; /* Cool Grey */
-  
-  --color-accent: #CEFF00;     /* Neon Volt (Electric Lime) */
-  --color-accent-foreground: #000000; /* Black text on neon */
-
-  /* Typography System */
-  --font-heading: var(--font-heading), sans-serif; /* Oswald */
-  --font-body: var(--font-body), sans-serif;       /* Inter */
-
-  /* Sports Aesthetics */
-  --tracking-tightest: -0.05em; /* For massive headlines */
-  --tracking-widest: 0.25em;    /* For tiny labels */
+  --color-background: #0f0f0f;
+  --color-foreground: #ffffff;
+  --color-muted: #1f1f1f;
+  --color-muted-foreground: #a3a3a3;
+  --color-accent: #CEFF00;
+  --color-accent-foreground: #000000;
+  --font-heading: var(--font-heading), sans-serif;
+  --font-body: var(--font-body), sans-serif;
+  --tracking-tightest: -0.05em;
+  --tracking-widest: 0.25em;
 }
 
-/* Matte Texture */
+/* ★ 優化：移除 CPU 密集的 SVG Filter，改用靜態疊加或直接移除 */
 .bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+  /* 如果非必要，建議在手機端禁用此效果以釋放主線程 */
+  background-image: none; 
 }
 
-/* Vertical Text Utility */
+@media (min-width: 768px) {
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+}
+
 .writing-vertical-rl {
   writing-mode: vertical-rl;
 }
 
 @media (max-width: 768px) {
-  /* iPhone Safari 對過強的毛玻璃效果非常吃力，我們強制降級 */
+  /* ★ 徹底優化：手機端直接禁用毛玻璃，這通常是 iPhone 渲染白屏的元兇 */
   .backdrop-blur-xl {
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.9) !important;
   }
   
-  /* 禁用手機端耗電的平滑滾動，改用原生滾動 */
   html {
     scroll-behavior: auto !important;
+    /* 防止點擊延遲 */
+    touch-action: manipulation;
   }
 }
