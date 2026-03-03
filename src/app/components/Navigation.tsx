@@ -58,7 +58,15 @@ export default function Navbar() {
           </button>
 
           <Link href="/" className="relative w-12 h-12 md:w-16 md:h-16 hover:scale-105 transition-transform duration-300">
-             <Image src="/logo.png" alt="852 Picklers" fill className="object-contain object-left" />
+             <Image 
+              src="/logo.png" 
+              alt="852 Picklers Logo" 
+               fill
+               priority // ★ 必須加上，告訴瀏覽器這是最重要的圖片
+               loading="eager" // ★ 強制立即加載，解決 PageSpeed 提到的 82.9 KiB 延遲
+               sizes="112px"   // ★ 優化點：明確指定尺寸，減少瀏覽器計算負擔
+               className="object-contain" 
+              />
           </Link>
         </div>
 

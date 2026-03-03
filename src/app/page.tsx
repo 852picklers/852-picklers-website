@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useLanguage } from "./context/LanguageContext"; // 引入全局語言狀態
+import { useLanguage } from "./context/LanguageContext";
 
 export default function Home() {
-  const { lang } = useLanguage(); // 讀取當前語言
+  const { lang } = useLanguage();
 
-  // 雙語字典，根據您提供的最新文案更新
   const ui = {
     ZH: {
       club: "852 Picklers 致力推動香港匹克球文化",
@@ -36,7 +35,6 @@ export default function Home() {
     }
   }[lang];
 
-  // 卡片數據：已移除 Game Rules，僅保留 Courts 與 Shop
   const CARDS = [
     {
       id: "courts",
@@ -77,7 +75,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden relative">
       
-      {/* 背景光影效果 */}
       <div className="fixed inset-0 pointer-events-none z-0">
          <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-accent/5 blur-[120px] rounded-full"></div>
          <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-neon-blue/5 blur-[120px] rounded-full"></div>
@@ -85,11 +82,11 @@ export default function Home() {
 
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 py-12 flex flex-col gap-16 md:gap-24">
         
-        {/* 頂部標題區塊 */}
         <header className="flex flex-col items-center justify-center pt-20 md:pt-28 pb-4">
            <div className="flex items-center justify-center gap-4 md:gap-6">
                <div className="relative w-16 h-16 md:w-20 md:h-20 drop-shadow-[0_0_15px_rgba(204,255,0,0.3)]">
-                  <Image src="/logo.png" alt="Logo" fill className="object-contain" />
+                  {/* ★ 優化：Logo 必須優先加載，解決 PageSpeed 提到的 82.9 KiB 延遲 */}
+                  <Image src="/logo.png" alt="Logo" fill priority className="object-contain" />
                </div>
                <h1 className="text-5xl md:text-7xl font-heading font-bold text-white tracking-tighter text-center drop-shadow-2xl">
                   852 Picklers
@@ -100,7 +97,6 @@ export default function Home() {
            </p>
         </header>
 
-        {/* 卡片區塊：改為 md:grid-cols-2 以適應隱藏規則頁面後的排版 */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 w-full pb-10">
           {CARDS.map((item, index) => (
             <Link href={item.link} key={item.id} id={item.anchor} className="group block w-full">
@@ -109,18 +105,21 @@ export default function Home() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className={`
-                  relative aspect-square w-full
-                  border border-white/10 bg-[#0a0a0a] 
-                  flex flex-col items-center justify-center text-center p-6
-                  transition-all duration-500 rounded-sm overflow-hidden
-                  ${item.hoverBorder} ${item.hoverShadow} ${item.hoverBg} hover:-translate-y-2
-                `}
+                className={`relative aspect-square w-full border border-white/10 bg-[#0a0a0a] flex flex-col items-center justify-center text-center p-6 transition-all duration-500 rounded-sm overflow-hidden ${item.hoverBorder} ${item.hoverShadow} ${item.hoverBg} hover:-translate-y-2`}
               >
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                  <Image src={item.image} alt={item.title} fill className="object-cover opacity-40 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  {/* ★ 優化：首頁前兩張大圖必須優先加載，解決 LCP 4.6秒 問題 */}
+                  <Image 
+                    src={item.image} 
+                    alt={item.title} 
+                    fill 
+                    priority={index < 2} // 前兩張設為高優先級
+                    loading={index < 2 ? "eager" : "lazy"} 
+                    className="object-cover opacity-40 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700" 
+                  />
                 </div>
                 
+                {/* 文字與 Icon 內容 */}
                 <div className="relative z-10 flex flex-col items-center gap-4">
                     <div className="text-white transition-all duration-500 transform group-hover:scale-110 group-hover:drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
                       {item.icon}
@@ -144,7 +143,7 @@ export default function Home() {
           ))}
         </section>
 
-        {/* 品牌故事與聯絡資訊區塊 */}
+        {/* 品牌故事區塊 */}
         <section id="footer-section" className="grid grid-cols-1 md:grid-cols-2 gap-12 border-t border-white/10 pt-16 pb-12 w-full">
           <div className="flex flex-col gap-6">
               <span className="text-accent font-bold tracking-widest uppercase text-sm flex items-center gap-2">
