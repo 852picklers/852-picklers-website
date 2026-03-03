@@ -3,16 +3,15 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import dynamic from "next/dynamic"; // ★ 新增：用於動態匯入組件
+import dynamic from "next/dynamic";
 import { Court, DISTRICTS, RegionKey } from "../data/courts";
 import { useLanguage } from "../context/LanguageContext";
 import Footer from "../components/Footer"; 
 
-// ★ 優化：動態匯入 StickyBanner
-// 這能延後加載 Banner 的代碼，減少首屏 JavaScript 大小（約 112 KiB），讓手機載入更流暢
+// ★ 效能優化 1：動態匯入 StickyBanner 以減少初始 JavaScript 負擔 (預估省下 112 KiB)
 const StickyBanner = dynamic(() => import("../components/StickyBanner"), { 
   ssr: false,
-  loading: () => <div className="fixed bottom-0 w-full h-24 bg-black/10 animate-pulse" /> 
+  loading: () => <div className="fixed bottom-0 w-full h-24 bg-black/5 animate-pulse z-[70]" /> 
 });
 
 const DISTRICT_I18N: Record<string, string> = {
@@ -26,6 +25,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
   const [activeDistrict, setActiveDistrict] = useState<string | "ALL">("ALL");
   const { lang } = useLanguage(); 
 
+  // 鎖定篩選邏輯，防止重複計算
   const filteredCourts = useMemo(() => {
     return initialCourts.filter(court => {
       const matchRegion = activeRegion === "ALL" || court.region === activeRegion;
@@ -41,7 +41,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
     setActiveDistrict("ALL");
   };
 
-  // ★ 更新後的精簡版文案
+  // 精簡版文案，優化手機版空間
   const ui = {
     ZH: {
       title: "香港匹克球場地整合", subtitle: "全港匹克球場資訊與預訂指南",
@@ -64,7 +64,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
            <p className="text-gray-400 font-body text-xs md:text-sm tracking-[0.2em] uppercase mt-3">{ui.subtitle}</p>
         </header>
 
-        {/* 篩選器：加大字體並套用新文案 */}
+        {/* 篩選器：加大字體確保行動端易於點擊 */}
         <div className="flex flex-col gap-6 border-b border-white/5 pb-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap gap-3">
@@ -94,9 +94,9 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
             )}
         </div>
 
-        {/* 兩欄式列表：優化設施標籤可讀性 */}
+        {/* 場地列表：手機版兩欄佈局，優化 LCP 圖片加載 */}
         <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-          {filteredCourts.map((court) => {
+          {filteredCourts.map((court, index) => {
             const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
             const cAddress = lang === "EN" && court.en.address ? court.en.address : court.address;
             const cDistrict = lang === "EN" ? DISTRICT_I18N[court.district] || court.district : court.district;
@@ -111,12 +111,15 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                       alt={cName} 
                       fill 
                       quality={60}
+                      // ★ 效能優化 2：前兩張圖片優先加載，解決 LCP 延遲問題
+                      priority={index < 2} 
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
                      />
                   </div>
                   <div className="p-3 md:p-6 flex flex-col flex-grow gap-2 md:gap-4">
                       <div className="flex items-center gap-1">
+                         {/* 恢復 [Region | District] 標籤 */}
                          <span className="text-[9px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase font-bold tracking-tighter">
                            {court.region} {court.district ? `| ${cDistrict}` : ""}
                          </span>
@@ -130,7 +133,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                         {cAddress}
                       </p>
 
-                      {/* 設施標籤：高對比配色 (深灰底 + 淺灰白字) */}
+                      {/* 設施標籤：加大字體並改為高對比深灰背景 */}
                       <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-white/10">
                         {(cFacilities || []).slice(0, 2).map((fac, idx) => (
                           <span key={idx} className="text-[10px] md:text-[11px] font-bold text-gray-200 bg-[#222] border border-white/10 px-2 py-1 rounded-sm whitespace-nowrap">
