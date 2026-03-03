@@ -3,10 +3,17 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic"; // ★ 新增：用於動態匯入組件
 import { Court, DISTRICTS, RegionKey } from "../data/courts";
-import StickyBanner from "../components/StickyBanner"; 
 import { useLanguage } from "../context/LanguageContext";
 import Footer from "../components/Footer"; 
+
+// ★ 優化：動態匯入 StickyBanner
+// 這能延後加載 Banner 的代碼，減少首屏 JavaScript 大小（約 112 KiB），讓手機載入更流暢
+const StickyBanner = dynamic(() => import("../components/StickyBanner"), { 
+  ssr: false,
+  loading: () => <div className="fixed bottom-0 w-full h-24 bg-black/10 animate-pulse" /> 
+});
 
 const DISTRICT_I18N: Record<string, string> = {
   "中西區": "Central and Western", "灣仔區": "Wan Chai", "東區": "Eastern", "南區": "Southern",
