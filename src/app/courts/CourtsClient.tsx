@@ -8,7 +8,7 @@ import { Court, DISTRICTS, RegionKey } from "../data/courts";
 import { useLanguage } from "../context/LanguageContext";
 import Footer from "../components/Footer"; 
 
-// ★ 效能優化 1：動態匯入 StickyBanner 以減少初始 JavaScript 負擔 (預估省下 112 KiB)
+// ★ 解決 111 KiB 無用 JS：只在客戶端加載 Banner
 const StickyBanner = dynamic(() => import("../components/StickyBanner"), { 
   ssr: false,
   loading: () => <div className="fixed bottom-0 w-full h-24 bg-black/5 animate-pulse z-[70]" /> 
@@ -25,7 +25,6 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
   const [activeDistrict, setActiveDistrict] = useState<string | "ALL">("ALL");
   const { lang } = useLanguage(); 
 
-  // 鎖定篩選邏輯，防止重複計算
   const filteredCourts = useMemo(() => {
     return initialCourts.filter(court => {
       const matchRegion = activeRegion === "ALL" || court.region === activeRegion;
@@ -41,7 +40,6 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
     setActiveDistrict("ALL");
   };
 
-  // 精簡版文案，優化手機版空間
   const ui = {
     ZH: {
       title: "香港匹克球場地整合", subtitle: "全港匹克球場資訊與預訂指南",
@@ -64,7 +62,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
            <p className="text-gray-400 font-body text-xs md:text-sm tracking-[0.2em] uppercase mt-3">{ui.subtitle}</p>
         </header>
 
-        {/* 篩選器：加大字體確保行動端易於點擊 */}
+        {/* 篩選器 */}
         <div className="flex flex-col gap-6 border-b border-white/5 pb-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex flex-wrap gap-3">
@@ -94,7 +92,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
             )}
         </div>
 
-        {/* 場地列表：手機版兩欄佈局，優化 LCP 圖片加載 */}
+        {/* 兩欄式列表：補回 Icon 與優化 LCP */}
         <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filteredCourts.map((court, index) => {
             const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
@@ -111,15 +109,15 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                       alt={cName} 
                       fill 
                       quality={60}
-                      // ★ 效能優化 2：前兩張圖片優先加載，解決 LCP 延遲問題
+                      // ★ 解決 LCPDiscovery 問題：前兩張設為最高優先級
                       priority={index < 2} 
+                      loading={index < 2 ? "eager" : "lazy"}
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
                      />
                   </div>
                   <div className="p-3 md:p-6 flex flex-col flex-grow gap-2 md:gap-4">
                       <div className="flex items-center gap-1">
-                         {/* 恢復 [Region | District] 標籤 */}
                          <span className="text-[9px] md:text-[10px] bg-neon-red/10 text-neon-red px-1.5 py-0.5 rounded-sm border border-neon-red/30 uppercase font-bold tracking-tighter">
                            {court.region} {court.district ? `| ${cDistrict}` : ""}
                          </span>
@@ -129,11 +127,17 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                         {cName}
                       </h3>
 
-                      <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1 opacity-60">
-                        {cAddress}
-                      </p>
+                      {/* ★ 補回地址圖標 Address Icon */}
+                      <div className="flex items-start gap-1 opacity-60">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5 text-gray-400">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1">
+                          {cAddress}
+                        </p>
+                      </div>
 
-                      {/* 設施標籤：加大字體並改為高對比深灰背景 */}
+                      {/* 設施標籤 */}
                       <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-white/10">
                         {(cFacilities || []).slice(0, 2).map((fac, idx) => (
                           <span key={idx} className="text-[10px] md:text-[11px] font-bold text-gray-200 bg-[#222] border border-white/10 px-2 py-1 rounded-sm whitespace-nowrap">
