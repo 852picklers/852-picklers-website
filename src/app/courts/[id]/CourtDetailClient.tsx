@@ -9,6 +9,7 @@ import { useLanguage } from "../../context/LanguageContext";
 export default function CourtDetailClient({ court }: { court: Court }) {
   const { lang } = useLanguage();
 
+  // 1. 恢復語言對應邏輯
   const cName = lang === "EN" && court.en?.name ? court.en.name : court.name;
   const cAddress = lang === "EN" && court.en?.address ? court.en.address : court.address;
   const cMtr = lang === "EN" && court.en?.mtr ? court.en.mtr : court.mtr;
@@ -19,9 +20,9 @@ export default function CourtDetailClient({ court }: { court: Court }) {
   const cBookingMethod = lang === "EN" && court.en?.bookingMethod ? court.en.bookingMethod : court.bookingMethod;
   const cFacilities = lang === "EN" && court.en?.facilities?.length > 0 ? court.en.facilities : court.facilities;
 
-  // SEO & Phone 邏輯：判斷 contactlink 是否為電話
+  // 2. 修正拼寫為 contactlink (正確版本)
   const rawData = court as any;
-  const contactRaw = rawData['contactlink'] || rawData['Contactlink'] || rawData['ContactLink'] || "";
+  const contactRaw = rawData.contactlink || ""; 
   const contactValue = String(contactRaw).trim();
   const isPhoneNumber = contactValue && /^\d+$/.test(contactValue.replace(/\s/g, ''));
   const finalContactHref = isPhoneNumber ? `tel:${contactValue.replace(/\s/g, '')}` : contactValue;
@@ -55,8 +56,16 @@ export default function CourtDetailClient({ court }: { court: Court }) {
          <Link href="/courts" className="text-gray-400 hover:text-neon-red transition-colors text-xs md:text-sm font-bold uppercase tracking-widest">{ui.back}</Link>
       </nav>
 
+      {/* 圖片區塊：確保 src 正確讀取 */}
       <div className="relative w-full h-[40vh] md:h-[50vh] mt-14 border-b border-neon-red/30 bg-black">
-        <Image src={court.coverImage || "/home-court.png"} alt={cName} fill priority className="object-cover opacity-50" />
+        <Image 
+          src={court.coverImage || "/home-court.png"} 
+          alt={cName} 
+          fill 
+          priority 
+          className="object-cover opacity-50" 
+          unoptimized={true} 
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
            <div className="flex items-center gap-3 mb-4 text-[10px] font-bold uppercase tracking-widest">
@@ -69,7 +78,6 @@ export default function CourtDetailClient({ court }: { court: Court }) {
 
       <div className="max-w-[1400px] mx-auto px-6 pt-12 md:pt-16 grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20">
          <div className="lg:col-span-2 flex flex-col gap-12">
-            {/* 設施區 */}
             {cFacilities && (
               <div className="bg-white/[0.02] border border-white/5 p-6 rounded-sm">
                  <h3 className="text-neon-red font-bold uppercase tracking-widest text-sm mb-6 flex items-center gap-3">
@@ -118,24 +126,22 @@ export default function CourtDetailClient({ court }: { court: Court }) {
                         )}
                       </div>
                       
-                      {/* 聯絡球場按鈕 (相容電話與網址) */}
-{court.contactlink && (
-  <a 
-    href={/^\d+$/.test(court.contactlink.replace(/\s/g, '')) 
-      ? `tel:${court.contactlink.replace(/\s/g, '')}` 
-      : court.contactlink} 
-    target={/^\d+$/.test(court.contactlink.replace(/\s/g, '')) ? "_self" : "_blank"}
-    rel="noopener noreferrer"
-    className="flex items-center justify-center gap-3 p-4 border border-[#ccff00]/30 bg-[#ccff00]/[0.02] hover:bg-[#ccff00]/0.05 hover:border-[#ccff00]/50 transition-all group rounded-sm"
-  >
-     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-[#ccff00]">
-       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-     </svg>
-     <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 group-hover:text-[#ccff00]">
-       {lang === 'EN' ? 'CONTACT VENUE' : '聯絡球場'}
-     </span>
-  </a>
-)}
+                      {/* 聯絡按鈕：修正拼寫為 contactlink */}
+                      {contactValue && (
+                        <a 
+                          href={finalContactHref} 
+                          target={isPhoneNumber ? "_self" : "_blank"}
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-3 p-4 border border-[#ccff00]/30 bg-[#ccff00]/[0.02] hover:bg-[#ccff00]/0.05 hover:border-[#ccff00]/50 transition-all group rounded-sm"
+                        >
+                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-[#ccff00]">
+                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                           </svg>
+                           <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 group-hover:text-[#ccff00]">
+                             {lang === 'EN' ? 'CONTACT VENUE' : '聯絡球場'}
+                           </span>
+                        </a>
+                      )}
                   </div>
                   
                   <div className="bg-[#ccff00]/[0.02] p-6 border-l-2 border-[#ccff00] flex flex-col gap-3">
@@ -144,7 +150,6 @@ export default function CourtDetailClient({ court }: { court: Court }) {
                   </div>
                </div>
 
-               {/* ★ 擁有球場 (移除按鈕霓虹發光) */}
                <div className="flex flex-col gap-6 border-l-2 border-neon-red pl-6 py-2">
                   <div className="flex flex-col gap-2">
                     <p className="text-white font-bold text-3xl tracking-tighter uppercase leading-none">{ui.ownCourt}</p>
@@ -155,7 +160,6 @@ export default function CourtDetailClient({ court }: { court: Court }) {
                   </a>
                </div>
 
-               {/* ★ Disclaimer (字體放大至 text-xs) */}
                <div className="mt-8 opacity-60 px-1">
                   <h4 className="text-gray-400 font-bold text-[12px] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
