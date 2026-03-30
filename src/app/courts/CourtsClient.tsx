@@ -8,11 +8,7 @@ import { Court, DISTRICTS, RegionKey } from "../data/courts";
 import { useLanguage } from "../context/LanguageContext";
 import Footer from "../components/Footer"; 
 
-// ★ 解決 111 KiB 無用 JS：只在客戶端加載 Banner
-const StickyBanner = dynamic(() => import("../components/StickyBanner"), { 
-  ssr: false,
-  loading: () => <div className="fixed bottom-0 w-full h-24 bg-black/5 animate-pulse z-[70]" /> 
-});
+const StickyBanner = dynamic(() => import("../components/StickyBanner"), { ssr: false });
 
 const DISTRICT_I18N: Record<string, string> = {
   "中西區": "Central and Western", "灣仔區": "Wan Chai", "東區": "Eastern", "南區": "Southern",
@@ -23,59 +19,115 @@ const DISTRICT_I18N: Record<string, string> = {
 export default function CourtsClient({ initialCourts, footerContent }: { initialCourts: Court[], footerContent: any }) {
   const [activeRegion, setActiveRegion] = useState<RegionKey | "ALL">("ALL");
   const [activeDistrict, setActiveDistrict] = useState<string | "ALL">("ALL");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC"); 
   const { lang } = useLanguage(); 
-
-  const filteredCourts = useMemo(() => {
-    return initialCourts.filter(court => {
-      const matchRegion = activeRegion === "ALL" || court.region === activeRegion;
-      const matchDistrict = activeDistrict === "ALL" || court.district === activeDistrict;
-      return matchRegion && matchDistrict;
-    });
-  }, [initialCourts, activeRegion, activeDistrict]);
-
-  const footerData = footerContent[lang.toLowerCase() === 'en' ? 'en' : 'cn']?.footer || {};
 
   const handleRegionChange = (region: RegionKey | "ALL") => {
     setActiveRegion(region);
     setActiveDistrict("ALL");
   };
 
+  const filteredCourts = useMemo(() => {
+    return initialCourts
+      .filter(court => {
+        const matchRegion = activeRegion === "ALL" || court.region === activeRegion;
+        const matchDistrict = activeDistrict === "ALL" || court.district === activeDistrict;
+        return matchRegion && matchDistrict;
+      })
+      .sort((a, b) => {
+        const nameA = lang === "EN" ? (a.en.name || a.name) : a.name;
+        const nameB = lang === "EN" ? (b.en.name || b.name) : b.name;
+        return sortOrder === "ASC" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+      });
+  }, [initialCourts, activeRegion, activeDistrict, lang, sortOrder]);
+
+  const footerData = footerContent[lang.toLowerCase() === 'en' ? 'en' : 'cn']?.footer || {};
+
   const ui = {
     ZH: {
-      title: "香港匹克球場地整合", subtitle: "全港匹克球場資訊與預訂指南",
-      all: "全部", regionHK: "香港島", regionKLN: "九龍", regionNT: "新界", allDistricts: "全區",
+      title: "香港匹克球場地整合",
+      subtitle: "全港匹克球場資訊與預訂指南",
+      all: "全部",
+      regionHK: "香港島", regionKLN: "九龍", regionNT: "新界",
+      allDistricts: "全區",
+      ownCourt: "擁有球場？",
+      submitDesc: "免費將您的場地刊登在 852 Picklers，連繫本地球友。", 
+      submit: "+ 加入你的球場",
+      sortAZ: "名稱 A-Z",
+      sortZA: "名稱 Z-A"
     },
     EN: {
-      title: "HK PICKLEBALL COURTS", subtitle: "HK Pickleball Courts & Booking Guide",
-      all: "ALL", regionHK: "HK ISLAND", regionKLN: "KOWLOON", regionNT: "NEW TERRITORIES", allDistricts: "ALL DISTRICTS",
+      title: "HK PICKLEBALL COURTS",
+      subtitle: "HK Pickleball Courts & Booking Guide",
+      all: "ALL",
+      regionHK: "HK ISLAND", regionKLN: "KOWLOON", regionNT: "NEW TERRITORIES",
+      allDistricts: "ALL DISTRICTS",
+      ownCourt: "OWN A COURT?",
+      submitDesc: "List your venue for free to reach the local community.",
+      submit: "+ Add your court",
+      sortAZ: "NAME A-Z",
+      sortZA: "NAME Z-A"
     }
   }[lang];
 
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden relative">
-      <main className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-6 py-16 md:py-20 flex flex-col gap-10">
-        <header className="flex flex-col items-start border-b border-white/10 pb-6">
-           <span className="text-neon-red font-bold tracking-widest uppercase text-xs flex items-center gap-2 mb-3">
-              <span className="w-8 h-[2px] bg-neon-red"></span>DIRECTORY
-           </span>
-           <h1 className="text-5xl md:text-7xl font-heading font-bold text-white uppercase tracking-tighter">{ui.title}</h1>
-           <p className="text-gray-400 font-body text-xs md:text-sm tracking-[0.2em] uppercase mt-3">{ui.subtitle}</p>
-        </header>
+      <main className="relative z-10 w-full max-w-[1400px] mx-auto px-4 md:px-6 pt-28 pb-16 flex flex-col gap-12">
+        
+        {/* ★ Browser View Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10 border-b border-white/10 pb-12">
+          
+          <header className="flex flex-col gap-5">
+            <h1 className="text-5xl md:text-7xl font-heading font-bold text-white uppercase tracking-tighter leading-tight">
+              {ui.title}
+            </h1>
+            {/* 加大副標題字體 */}
+            <p className="text-gray-400 font-body text-sm md:text-base tracking-[0.2em] uppercase">
+              {ui.subtitle}
+            </p>
+          </header>
 
-        {/* 篩選器 */}
+          {/* ★ Submission Session: 壓縮間距並加大按鈕字體 */}
+          <div className="flex flex-col items-start lg:items-end gap-4 p-8 bg-white/[0.03] border border-white/10 rounded-sm lg:max-w-md w-full">
+            <div className="flex flex-col gap-1.5 lg:text-right">
+              <p className="text-neon-red font-bold text-xl md:text-2xl tracking-widest uppercase">{ui.ownCourt}</p>
+              <p className="text-gray-400 text-[11px] md:text-sm leading-relaxed">{ui.submitDesc}</p>
+            </div>
+            <a 
+              href="https://forms.gle/W4i4GJtYnucUC9Qi6" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full lg:w-auto px-8 py-4 border border-white/20 text-white hover:border-neon-red hover:text-neon-red transition-all text-sm font-bold tracking-widest rounded-sm uppercase text-center"
+            >
+              {ui.submit}
+            </a>
+          </div>
+        </div>
+
+        {/* 篩選與排序佈局 */}
         <div className="flex flex-col gap-6 border-b border-white/5 pb-8">
-            <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex flex-wrap gap-3">
                 {["ALL", "HK", "KLN", "NT"].map((r) => (
                   <button 
                     key={r}
                     onClick={() => handleRegionChange(r as any)} 
-                    className={`px-5 py-2.5 rounded-sm border text-sm md:text-base font-bold uppercase tracking-widest transition-all ${activeRegion === r ? "bg-neon-red text-white border-neon-red" : "border-white/20 text-gray-500 hover:text-white"}`}
+                    className={`px-5 py-2.5 rounded-sm border text-sm md:text-base font-bold uppercase tracking-widest transition-all ${activeRegion === r ? "bg-neon-red text-white border-neon-red shadow-[0_0_15px_rgba(255,0,60,0.3)]" : "border-white/10 text-gray-500 hover:text-white"}`}
                   >
                     {r === "ALL" ? ui.all : (ui as any)[`region${r}`]}
                   </button>
                 ))}
               </div>
+
+              <button 
+                onClick={() => setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC")}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-white/30 transition-all text-[10px] font-bold tracking-[0.2em] rounded-sm uppercase"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neon-red">
+                  <path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/>
+                </svg>
+                {sortOrder === "ASC" ? ui.sortAZ : ui.sortZA}
+              </button>
             </div>
 
             {activeRegion !== "ALL" && (
@@ -92,13 +144,12 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
             )}
         </div>
 
-        {/* 兩欄式列表：補回 Icon 與優化 LCP */}
+        {/* 列表內容 */}
         <section className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {filteredCourts.map((court, index) => {
             const cName = lang === "EN" && court.en.name ? court.en.name : court.name;
             const cAddress = lang === "EN" && court.en.address ? court.en.address : court.address;
             const cDistrict = lang === "EN" ? DISTRICT_I18N[court.district] || court.district : court.district;
-            const cFacilities = lang === "EN" && court.en.facilities?.length > 0 ? court.en.facilities : court.facilities;
 
             return (
               <Link href={`/courts/${court.id}`} key={court.id} className="group">
@@ -109,10 +160,7 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                       alt={cName} 
                       fill 
                       quality={60}
-                      // ★ 解決 LCPDiscovery 問題：前兩張設為最高優先級
                       priority={index < 2} 
-                      loading={index < 2 ? "eager" : "lazy"}
-                      sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" 
                      />
                   </div>
@@ -122,28 +170,12 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
                            {court.region} {court.district ? `| ${cDistrict}` : ""}
                          </span>
                       </div>
-                      
-                      <h3 className="text-[14px] md:text-2xl font-heading font-bold text-white group-hover:text-neon-red transition-colors line-clamp-1">
-                        {cName}
-                      </h3>
-
-                      {/* ★ 補回地址圖標 Address Icon */}
+                      <h3 className="text-[14px] md:text-2xl font-heading font-bold text-white group-hover:text-neon-red transition-colors line-clamp-1">{cName}</h3>
                       <div className="flex items-start gap-1 opacity-60">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5 text-gray-400">
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
                         </svg>
-                        <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1">
-                          {cAddress}
-                        </p>
-                      </div>
-
-                      {/* 設施標籤 */}
-                      <div className="flex flex-wrap gap-1.5 mt-auto pt-3 border-t border-white/10">
-                        {(cFacilities || []).slice(0, 2).map((fac, idx) => (
-                          <span key={idx} className="text-[10px] md:text-[11px] font-bold text-gray-200 bg-[#222] border border-white/10 px-2 py-1 rounded-sm whitespace-nowrap">
-                            {fac}
-                          </span>
-                        ))}
+                        <p className="text-gray-400 text-[10px] md:text-sm line-clamp-1">{cAddress}</p>
                       </div>
                   </div>
                 </div>
@@ -152,7 +184,6 @@ export default function CourtsClient({ initialCourts, footerContent }: { initial
           })}
         </section>
       </main>
-
       <Footer data={footerData} />
       <StickyBanner />
     </div>

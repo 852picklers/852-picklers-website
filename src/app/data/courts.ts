@@ -1,6 +1,6 @@
 // src/app/data/courts.ts
 
-// 確保導出 DISTRICTS，解決先前的 Build Error
+// 1. 確保導出 DISTRICTS，解決 CourtsClient.tsx 的 Build Error
 export const DISTRICTS = {
   HK: ["中西區", "灣仔區", "東區", "南區"],
   KLN: ["油尖旺區", "深水埗區", "九龍城區", "黃大仙區", "觀塘區"],
@@ -26,6 +26,7 @@ export interface Court {
   facilities: string[];
   priceInfo: string;
   membership: string; 
+  contactlink: string;
   en: {
     name: string;
     address: string;
@@ -36,15 +37,19 @@ export interface Court {
     facilities: string[];
     priceInfo: string;
     membership: string; 
+    contactlink: string;
   }
 }
 
+/**
+ * 核心數據抓取函數：加入路徑修復邏輯以解決 iPhone 400 錯誤與發熱問題
+ */
 export async function getCourtsData(): Promise<Court[]> {
   try {
     // 使用絕對路徑確保伺服器抓得到 API
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://852picklers.com';
     
-    // 設定快取 60 秒更新一次，減少對 Google Sheets 的頻繁請求
+    // 設定快取 60 秒更新一次，減少頻繁請求導致的手機負擔
     const response = await fetch(`${baseUrl}/api/courts`, { 
       next: { revalidate: 60 },
       headers: { 'Content-Type': 'application/json' }
@@ -67,10 +72,19 @@ export async function getCourtsData(): Promise<Court[]> {
       const id = rowZh.id ? String(rowZh.id).trim() : "";
       const rowEn = enDataMap[id] || {}; 
 
-      // 圖片路徑修正：解決 400 錯誤的核心位置
-      let imagePath = String(rowZh.coverImage || rowZh.coverimage || "").trim();
-      if (imagePath && !imagePath.startsWith('http')) {
-        imagePath = imagePath.startsWith('/') ? imagePath : '/' + imagePath;
+      // ★ 核心修復：徹底解決 400 Bad Request 的圖片路徑邏輯 ★
+      // 防止 iPhone Safari 因為路徑解析錯誤而不斷重試請求，導致手機發燙
+      let rawPath = String(rowZh.coverImage || rowZh.coverimage || "").trim();
+      let imagePath = "/home-court.png"; // 預設圖片
+
+      if (rawPath) {
+        if (rawPath.startsWith('http')) {
+          imagePath = rawPath;
+        } else {
+          // 先移除開頭所有斜槓，再重新補上單個斜槓，確保路徑合法
+          const cleanPath = rawPath.replace(/^\/+/, '');
+          imagePath = '/' + cleanPath;
+        }
       }
 
       const parseFacilities = (facStr: any) => {
@@ -82,9 +96,9 @@ export async function getCourtsData(): Promise<Court[]> {
         id,
         region: (rowZh.region as RegionKey) || "NT",
         district: rowZh.district || "",
-        googleMapLink: rowZh.googleMapLink || rowZh.googlemaplink || "",
-        bookingLink: (rowZh.bookingLink || rowZh.bookinglink || "").trim(),
-        coverImage: imagePath || "/home-court.png",
+        googleMapLink: String(rowZh.googleMapLink || rowZh.googlemaplink || "").trim(),
+        bookingLink: String(rowZh.bookingLink || rowZh.bookinglink || "").trim(),
+        coverImage: imagePath, 
         walkMins: parseInt(rowZh.walkMins || rowZh.walkmins) || 0,
         name: rowZh.name || "",
         address: rowZh.address || "",
@@ -95,6 +109,8 @@ export async function getCourtsData(): Promise<Court[]> {
         facilities: parseFacilities(rowZh.facilities),
         priceInfo: rowZh.priceInfo || rowZh.priceinfo || "",
         membership: rowZh.membership || "",
+        contactlink: rowZh.contactlink || rowZh.contactlink || "",
+
         en: {
           name: rowEn.name || rowZh.name || "",
           address: rowEn.address || rowZh.address || "",
@@ -105,11 +121,12 @@ export async function getCourtsData(): Promise<Court[]> {
           facilities: rowEn.facilities ? parseFacilities(rowEn.facilities) : parseFacilities(rowZh.facilities),
           priceInfo: rowEn.priceInfo || rowZh.priceInfo || "",
           membership: rowEn.membership || rowZh.membership || "",
+          contactlink: rowZh.contactlink || rowZh.contactlink || "",
         }
       };
     });
   } catch (error) {
-    console.error("Data error:", error);
+    console.error("Data processing error:", error);
     return []; 
   }
 }
